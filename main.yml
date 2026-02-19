@@ -7,18 +7,18 @@
     BORG_PASSPHRASE: "{{ borg_passphrase }}"
     BORG_RSH: ssh -i {{ private_key_path }}
     BORG_REPO: "{{ ssh_connection }}:{{ borg_repo_full_path }}"
-    BORG_EXIT_CODES: modern
+    #BORG_EXIT_CODES: modern
 
   tasks:
     - name: Check if the repository is present
       command: borg check
       #command: ssh -i {{ private_key_path }} {{ ssh_connection }} "{{ check borg_repo_full_path }}"
       register: repository_exists
-      failed_when: repository_exists.rc != 10 and repository_exists.rc != 13
+      failed_when: repository_exists.rc != 0 and repository_exists.rc != 2
 
     - name: Make sure the repository is initialized
       command: borg init --encryption=repokey
-      when: repository_exists.rc == 13
+      when: repository_exists.rc == 2 
 
     - name: Backup the folder
       command: borg create ::{{ borg_repo_name }}_{{ lookup('pipe','date +%Y-%m-%d_%H-%M-%S') }} {{ local_folder }}
