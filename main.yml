@@ -10,7 +10,7 @@
 
   tasks:
     - name: Check if the repository is present
-      command: ssh -i {{ private_key_path }} {{ ssh_connection }} "check {{ borg_repo_full_path }}"
+      command: ssh -i {{ private_key_path }} {{ ssh_connection }} "{{ check borg_repo_full_path }}"
       register: repository_exists
       failed_when: repository_exists.rc != 1 and repository_exists.rc != 0
 
